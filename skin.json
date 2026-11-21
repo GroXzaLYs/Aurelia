@@ -1,0 +1,86 @@
+{
+  "name": "Aurelia",
+  "version": "1.0.0",
+  "author": [
+    "AnerysRynz"
+  ],
+  "url": "",
+  "descriptionmsg": "aurelia-skin-desc",
+  "namemsg": "skinname-aurelia",
+  "license-name": "MIT",
+  "type": "skin",
+  "requires": {
+    "MediaWiki": ">= 1.39.0"
+  },
+  "ValidSkinNames": {
+    "aurelia": {
+      "class": "SkinMustache",
+      "args": [
+        {
+          "name": "aurelia",
+          "responsive": true,
+          "menus": [
+            "user-menu",
+            "notifications",
+            "user-interface-preferences",
+            "user-page",
+            "associated-pages",
+            "views",
+            "actions",
+            "languages",
+            "footer-info",
+            "footer-places",
+            "footer-icons"
+          ],
+          "messages": [
+            "sitetitle",
+            "search",
+            "navigation-heading",
+            "tagline",
+            "otherlanguages"
+          ],
+          "styles": [
+            "skins.aurelia.styles"
+          ],
+          "scripts": [
+            "skins.aurelia"
+          ]
+        }
+      ]
+    }
+  },
+  "MessagesDirs": {
+    "Aurelia": [
+      "i18n"
+    ]
+  },
+  "ResourceModules": {
+    "skins.aurelia.styles": {
+      "class": "MediaWiki\\ResourceLoader\\SkinModule",
+      "features": {
+        "normalize": true,
+        "elements": true,
+        "content-links": true,
+        "content-media": true,
+        "content-tables": true,
+        "interface-category": true,
+        "i18n-headings": true,
+        "toc": true
+      },
+      "styles": [
+        "resources/vendor/fontawesome/css/all.min.css",
+        "resources/aurelia.css"
+      ]
+    },
+    "skins.aurelia": {
+      "packageFiles": [
+        "resources/aurelia.js"
+      ]
+    }
+  },
+  "ResourceFileModulePaths": {
+    "localBasePath": "",
+    "remoteSkinPath": "Aurelia"
+  },
+  "manifest_version": 2
+}

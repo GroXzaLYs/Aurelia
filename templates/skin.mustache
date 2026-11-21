@@ -1,0 +1,159 @@
+
+<div id="aurelia-root" class="aurelia" {{{html-user-language-attributes}}}>
+    <a class="aurelia-skip-link" href="#content">{{msg-aurelia-skip-to-content}}</a>
+
+    <div class="aurelia-reading-progress" aria-hidden="true"></div>
+
+    <header class="aurelia-header">
+        <div class="aurelia-header-inner">
+            <button class="aurelia-nav-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="aurelia-sidebar">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+
+            <a class="aurelia-brand" href="{{link-mainpage}}">
+                {{#data-logos}}
+                    {{#icon}}
+                        <img class="aurelia-logo-icon" src="{{.}}" alt="">
+                    {{/icon}}
+                    {{#wordmark}}
+                        <img class="aurelia-logo-wordmark" src="{{src}}" width="{{width}}" height="{{height}}" style="{{style}}" alt="{{msg-sitetitle}}">
+                    {{/wordmark}}
+                    {{^wordmark}}
+                        <span>{{msg-sitetitle}}</span>
+                    {{/wordmark}}
+                {{/data-logos}}
+                {{^data-logos}}
+                    <span>{{msg-sitetitle}}</span>
+                {{/data-logos}}
+            </a>
+
+            <div class="aurelia-search">
+                {{#data-search-box}}
+                    {{>Search}}
+                {{/data-search-box}}
+            </div>
+
+            <div class="aurelia-header-actions">
+                <button class="aurelia-theme-toggle" type="button" aria-label="{{msg-aurelia-toggle-theme}}">
+                    <i class="aurelia-theme-icon fa-solid fa-moon" aria-hidden="true"></i>
+                </button>
+
+                {{#data-portlets.data-notifications}}
+                    {{>Menu}}
+                {{/data-portlets.data-notifications}}
+
+                {{#data-portlets.data-user-interface-preferences}}
+                    {{>Menu}}
+                {{/data-portlets.data-user-interface-preferences}}
+
+                <div class="aurelia-account">
+                    <button
+                        class="aurelia-account-toggle"
+                        type="button"
+                        aria-label=""
+                        aria-expanded="false"
+                        aria-controls="aurelia-account-menu"
+                    >
+                        <i class="aurelia-account-avatar fa-solid fa-user" aria-hidden="true"></i>
+                    </button>
+
+                    <div id="aurelia-account-menu" class="aurelia-account-menu" hidden>
+                        {{#data-portlets.data-user-page}}
+                            {{>Menu}}
+                        {{/data-portlets.data-user-page}}
+
+                        {{#data-portlets.data-user-menu}}
+                            {{>Menu}}
+                        {{/data-portlets.data-user-menu}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="aurelia-layout">
+        <aside id="aurelia-sidebar" class="aurelia-sidebar">
+            <div class="aurelia-sidebar-inner">
+                {{#data-portlets-sidebar}}
+                    {{#data-portlets-first}}
+                        {{>Menu}}
+                    {{/data-portlets-first}}
+
+                    {{#array-portlets-rest}}
+                        {{>Menu}}
+                    {{/array-portlets-rest}}
+                {{/data-portlets-sidebar}}
+
+                {{#data-portlets.data-languages}}
+                    {{>Menu}}
+                {{/data-portlets.data-languages}}
+            </div>
+        </aside>
+
+        <div class="aurelia-backdrop" hidden></div>
+
+        <main id="content" class="aurelia-main">
+            {{#html-site-notice}}
+                <div class="aurelia-site-notice">{{{html-site-notice}}}</div>
+            {{/html-site-notice}}
+
+            {{#html-user-message}}
+                <div class="aurelia-user-message">{{{html-user-message}}}</div>
+            {{/html-user-message}}
+
+            <div class="aurelia-title-wrap">
+                {{#html-subtitle}}
+                    <div class="aurelia-subtitle">{{{html-subtitle}}}</div>
+                {{/html-subtitle}}
+
+                <h1 class="aurelia-page-title">{{{html-title}}}</h1>
+
+                {{#array-indicators}}
+                    <span class="aurelia-indicator">{{{html}}}</span>
+                {{/array-indicators}}
+            </div>
+
+            <details class="aurelia-page-tools">
+                <summary class="aurelia-page-tools-toggle" aria-label="Page tools" title="Page tools">
+                    <i class="fa-solid fa-ellipsis" aria-hidden="true"></i>
+                    <span class="aurelia-page-tools-label">Page tools</span>
+                </summary>
+                <div class="aurelia-page-tools-menu">
+                    {{#data-portlets.data-associated-pages}}
+                        {{>Menu}}
+                    {{/data-portlets.data-associated-pages}}
+
+                    {{#data-portlets.data-views}}
+                        {{>Menu}}
+                    {{/data-portlets.data-views}}
+
+                    {{#data-portlets.data-actions}}
+                        {{>Menu}}
+                    {{/data-portlets.data-actions}}
+
+                    {{#data-portlets.data-variants}}
+                        {{>Menu}}
+                    {{/data-portlets.data-variants}}
+                </div>
+            </details>
+
+            {{#html-undelete-link}}
+                <div class="aurelia-undelete">{{{html-undelete-link}}}</div>
+            {{/html-undelete-link}}
+
+            <article class="aurelia-content">
+                {{{html-body-content}}}
+            </article>
+
+            {{#html-categories}}
+                <div class="aurelia-categories">{{{html-categories}}}</div>
+            {{/html-categories}}
+
+            {{#html-after-content}}
+                <div class="aurelia-after-content">{{{html-after-content}}}</div>
+            {{/html-after-content}}
+
+            {{>Footer}}
+        </main>
+    </div>
+</div>

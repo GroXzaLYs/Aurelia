@@ -1,0 +1,27 @@
+<footer class="aurelia-footer">
+    {{#data-footer}}
+        {{#data-info}}
+            <ul id="{{id}}" class="aurelia-footer-list {{className}}">
+                {{#array-items}}
+                    <li id="{{id}}">{{{html}}}</li>
+                {{/array-items}}
+            </ul>
+        {{/data-info}}
+
+        {{#data-places}}
+            <ul id="{{id}}" class="aurelia-footer-list {{className}}">
+                {{#array-items}}
+                    <li id="{{id}}">{{{html}}}</li>
+                {{/array-items}}
+            </ul>
+        {{/data-places}}
+
+        {{#data-icons}}
+            <ul id="{{id}}" class="aurelia-footer-icons {{className}}">
+                {{#array-items}}
+                    <li id="{{id}}">{{{html}}}</li>
+                {{/array-items}}
+            </ul>
+        {{/data-icons}}
+    {{/data-footer}}
+</footer>

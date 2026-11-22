@@ -73,9 +73,13 @@
         dark ? 'Light theme' : 'Dark theme'
       );
 
-      themeToggle.innerHTML = dark
-        ? '<i class="aurelia-theme-icon fa-solid fa-sun" aria-hidden="true"></i>'
-        : '<i class="aurelia-theme-icon fa-solid fa-moon" aria-hidden="true"></i>';
+      var themeIcon = themeToggle.querySelector('.aurelia-theme-icon');
+
+      if (themeIcon) {
+        themeIcon.className = dark
+          ? 'aurelia-theme-icon fa-solid fa-sun'
+          : 'aurelia-theme-icon fa-solid fa-moon';
+      }
     }
 
     if (save) {
@@ -127,26 +131,82 @@
     }
   }
 
+  var searchPanel = root.querySelector('.aurelia-search');
+  var searchToggle = root.querySelector('.aurelia-search-toggle');
+  var searchClose = root.querySelector('.aurelia-search-close');
+  var header = root.querySelector('.aurelia-header');
   var searchInput = root.querySelector(
     '.aurelia-search input[type="search"], .aurelia-search input[name="search"]'
   );
 
+  function openSearch() {
+    if (!searchPanel || !header) {
+      return;
+    }
+
+    searchPanel.hidden = false;
+    header.classList.add('aurelia-search-open');
+
+    if (searchToggle) {
+      searchToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    if (searchInput) {
+      searchInput.focus();
+      searchInput.select();
+    }
+  }
+
+  function closeSearch() {
+    if (!searchPanel || !header) {
+      return;
+    }
+
+    searchPanel.hidden = true;
+    header.classList.remove('aurelia-search-open');
+
+    if (searchToggle) {
+      searchToggle.setAttribute('aria-expanded', 'false');
+      searchToggle.focus();
+    }
+
+    if (searchInput) {
+      searchInput.blur();
+    }
+  }
+
+  if (searchToggle) {
+    searchToggle.addEventListener('click', openSearch);
+  }
+
+  if (searchClose) {
+    searchClose.addEventListener('click', closeSearch);
+  }
+
+  document.addEventListener('click', function (event) {
+    if (header && header.classList.contains('aurelia-search-open')) {
+      if (searchPanel && !searchPanel.contains(event.target) && searchToggle && !searchToggle.contains(event.target)) {
+        closeSearch();
+      }
+    }
+  });
+
   document.addEventListener('keydown', function (event) {
     if (
       (event.ctrlKey || event.metaKey) &&
-      event.key.toLowerCase() === 'k'
+      event.key.toLowerCase() === 'k' &&
+      searchInput
     ) {
-      if (searchInput) {
-        event.preventDefault();
-        searchInput.focus();
-        searchInput.select();
-      }
+      event.preventDefault();
+      openSearch();
     }
 
     if (event.key === 'Escape') {
       closeNavigation();
 
-      if (document.activeElement === searchInput) {
+      if (header && header.classList.contains('aurelia-search-open')) {
+        closeSearch();
+      } else if (document.activeElement === searchInput && searchInput) {
         searchInput.blur();
       }
     }
@@ -296,7 +356,8 @@
     [/settings|preferences|preferensi|pengaturan/, 'fa-gear'],
     [/language|bahasa/, 'fa-language'],
     [/user|account|akun|profile|profil/, 'fa-user'],
-    [/notification|notifikasi/, 'fa-bell'],
+    [/notification|notifikasi|alert|alerts/, 'fa-bell'],
+    [/message|messages|pesan/, 'fa-envelope'],
     [/help|bantuan/, 'fa-circle-question'],
     [/random|acak/, 'fa-shuffle'],
     [/permalink|tautan permanen/, 'fa-link'],
@@ -364,7 +425,6 @@
         }
     });
 })();
-
 
 (function () {
   'use strict';

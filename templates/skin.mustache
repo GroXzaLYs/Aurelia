@@ -27,17 +27,19 @@
                 {{/data-logos}}
             </a>
 
-            <div class="aurelia-search">
+            <div class="aurelia-search" id="aurelia-search-panel" hidden>
                 {{#data-search-box}}
                     {{>Search}}
                 {{/data-search-box}}
+                <button class="aurelia-search-close" type="button" aria-label="Close search" title="Close search">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
 
             <div class="aurelia-header-actions">
-                <button class="aurelia-theme-toggle" type="button" aria-label="{{msg-aurelia-toggle-theme}}">
-                    <i class="aurelia-theme-icon fa-solid fa-moon" aria-hidden="true"></i>
+                <button class="aurelia-search-toggle" type="button" aria-label="{{msg-search}}" title="{{msg-search}}" aria-expanded="false" aria-controls="aurelia-search-panel">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                 </button>
-
                 {{#data-portlets.data-notifications}}
                     {{>Menu}}
                 {{/data-portlets.data-notifications}}
@@ -58,6 +60,12 @@
                     </button>
 
                     <div id="aurelia-account-menu" class="aurelia-account-menu" hidden>
+                        <div class="aurelia-account-theme-row">
+                            <span class="aurelia-account-theme-label">{{msg-aurelia-toggle-theme}}</span>
+                            <button class="aurelia-theme-toggle" type="button" aria-label="{{msg-aurelia-toggle-theme}}">
+                                <i class="aurelia-theme-icon fa-solid fa-moon" aria-hidden="true"></i>
+                            </button>
+                        </div>
                         {{#data-portlets.data-user-page}}
                             {{>Menu}}
                         {{/data-portlets.data-user-page}}

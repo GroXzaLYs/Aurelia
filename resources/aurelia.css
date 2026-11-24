@@ -111,20 +111,47 @@
 }
 
 .aurelia-search {
-  position: absolute;
-  z-index: 20;
-  inset: 0;
+  position: relative;
+  z-index: 1;
   display: flex;
+  flex: 1 1 360px;
   align-items: center;
   gap: 12px;
-  width: 100%;
-  max-width: none;
-  padding: 0 20px;
-  background: var(--au-surface);
+  width: auto;
+  max-width: min(520px, 42vw);
+  min-width: 220px;
+  margin-inline: 0 auto;
+  padding: 0;
+  background: transparent;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transform-origin: center;
+  transition: opacity .34s cubic-bezier(.22, 1, .36, 1), transform .34s cubic-bezier(.22, 1, .36, 1), visibility .34s ease;
+  will-change: opacity, transform;
 }
 
-.aurelia-header.aurelia-search-open .aurelia-search {
-  display: flex;
+.aurelia-search[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 761px) {
+  .aurelia-search-toggle,
+  .aurelia-search-close {
+    display: none !important;
+  }
+
+  .aurelia-search-form {
+    width: 100%;
+  }
+}
+
+.aurelia-search.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
 }
 
 .aurelia-search-form {
@@ -170,6 +197,11 @@
   box-shadow: 0 5px 15px rgba(0,0,0,.08);
 }
 
+.aurelia :is(.aurelia-search-close, .aurelia-search-toggle, .aurelia-theme-toggle, .aurelia-account-toggle, .aurelia-header-actions #p-notifications a, .aurelia-header-actions [id*="notification"] a):focus-visible {
+  outline: 2px solid var(--au-accent);
+  outline-offset: 2px;
+}
+
 .aurelia-search-label {
   position: absolute;
   width: 1px;
@@ -203,7 +235,7 @@
   outline: none;
   background: var(--au-surface-soft);
   color: var(--au-text);
-  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  transition: border-color .28s cubic-bezier(.22, 1, .36, 1), box-shadow .28s cubic-bezier(.22, 1, .36, 1), background-color .28s ease;
 }
 
 .aurelia-search input:focus {
@@ -278,13 +310,30 @@
   justify-content: center;
   padding: 0;
   border-radius: 11px;
+  border: 1px solid transparent;
+  color: var(--au-text);
   font-size: 0;
+  transition: background-color .28s cubic-bezier(.22, 1, .36, 1), color .28s ease, border-color .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
+}
+
+.aurelia-header-actions #p-notifications .aurelia-portlet-list a:hover,
+.aurelia-header-actions [id*="notification"] .aurelia-portlet-list a:hover {
+  border-color: var(--au-line);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  transform: translateY(-1px);
 }
 
 .aurelia-header-actions #p-notifications .aurelia-fa-icon,
 .aurelia-header-actions [id*="notification"] .aurelia-fa-icon {
   margin: 0;
   font-size: 15px;
+  transition: transform .32s cubic-bezier(.22, 1, .36, 1), color .28s ease;
+}
+
+.aurelia-header-actions #p-notifications a:hover .aurelia-fa-icon,
+.aurelia-header-actions [id*="notification"] a:hover .aurelia-fa-icon {
+  transform: translateY(-1px) rotate(-8deg);
 }
 
 .aurelia-header-actions #p-notifications .mw-echo-ui-notificationBadge,
@@ -752,13 +801,20 @@ body.ns--1 .aurelia-page-tools,
 
 .aurelia-footer {
   display: flex;
+  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 24px;
-  margin-top: 24px;
-  padding: 20px 4px;
+  gap: 18px 28px;
+  margin-top: 30px;
+  padding: 22px 4px 12px;
+  border-top: 1px solid var(--au-line);
   color: var(--au-muted);
   font-size: 12px;
   animation: au-footer-in .45s ease .12s both;
+}
+
+.aurelia-footer > * {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .aurelia-footer .aurelia-portlet {
@@ -766,17 +822,51 @@ body.ns--1 .aurelia-page-tools,
 }
 
 .aurelia-footer .aurelia-portlet-label {
-  padding: 0;
+  padding: 0 0 5px;
+  color: var(--au-text);
+  font-size: 12px;
+  font-weight: 650;
 }
 
 .aurelia-footer ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 7px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aurelia-footer li {
+  min-width: 0;
 }
 
 .aurelia-footer li a {
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 0;
+  color: var(--au-muted);
+  text-decoration: none;
+  transition: color .16s ease;
+}
+
+.aurelia-footer li a:hover,
+.aurelia-footer li a:focus-visible {
+  color: var(--au-accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.aurelia-footer-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline-start: auto !important;
+}
+
+.aurelia-footer-icons img {
+  max-width: 90px;
+  height: auto;
 }
 
 .aurelia-backdrop[hidden] {
@@ -981,8 +1071,8 @@ body.ns--1 .aurelia-page-tools,
 .aurelia-copy-code,
 .aurelia-content img,
 .aurelia-content video {
-  transition: color .18s ease, background-color .18s ease, border-color .18s ease,
-    box-shadow .18s ease, opacity .22s ease, transform .22s ease;
+  transition: color .28s cubic-bezier(.22, 1, .36, 1), background-color .28s cubic-bezier(.22, 1, .36, 1), border-color .28s ease,
+    box-shadow .32s cubic-bezier(.22, 1, .36, 1), opacity .32s ease, transform .32s cubic-bezier(.22, 1, .36, 1);
 }
 
 .aurelia-header {
@@ -1168,15 +1258,46 @@ body.ns--1 .aurelia-page-tools,
   }
 
   .aurelia-search {
-    flex: none;
+    position: absolute;
+    z-index: 30;
     inset: 0;
+    display: flex;
+    flex: none;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
     padding: 0 12px;
+    background: var(--au-surface);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px) scale(.985);
+    transition: opacity .34s cubic-bezier(.22, 1, .36, 1), transform .34s cubic-bezier(.22, 1, .36, 1), visibility .34s ease;
+  }
+
+  .aurelia-search.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .aurelia-search-toggle {
+    display: inline-flex;
+  }
+
+  .aurelia-search-close {
+    display: inline-flex;
   }
 
   .aurelia-header-actions {
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .aurelia-search:not(.is-visible) {
+    display: none;
   }
 
   .aurelia-header-actions .aurelia-portlet {
@@ -1247,11 +1368,18 @@ body.ns--1 .aurelia-page-tools,
   }
 
   .aurelia-footer {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px 2px 10px;
   }
 
   .aurelia-footer .aurelia-portlet {
-    margin-bottom: 18px;
+    margin: 0;
+  }
+
+  .aurelia-footer-icons {
+    margin-inline-start: 0 !important;
   }
 
   .aurelia-account-menu {
@@ -1781,146 +1909,1118 @@ body[data-aurelia-theme="dark"] :is(.oo-ui-inputWidget input, .oo-ui-inputWidget
   text-underline-offset: 2px;
 }
 
-body.mw-special-Preferences .mw-content-text,
-.mw-special-Preferences .mw-content-text {
-  color: var(--au-text);
+/* MediaWiki OOUI and Codex components */
+body[data-aurelia-theme="light"] {
+  --au-bg: #f4f6f5;
+  --au-surface: #fff;
+  --au-surface-soft: #f8faf9;
+  --au-text: #172522;
+  --au-muted: #71807b;
+  --au-line: #e4eae7;
+  --au-accent: #087f68;
+  --au-accent-strong: #066653;
+  --au-accent-soft: #e8f5f1;
 }
 
-body.mw-special-Preferences .oo-ui-searchWidget,
-body.mw-special-Preferences .mw-htmlform-field-HTMLTextField.oo-ui-searchWidget,
-.mw-special-Preferences .oo-ui-inputWidget {
-  position: relative;
+body[data-aurelia-theme="dark"] {
+  --au-bg: #101715;
+  --au-surface: #18211e;
+  --au-surface-soft: #1d2925;
+  --au-text: #e7efeb;
+  --au-muted: #9aaba4;
+  --au-line: #2b3933;
+  --au-accent: #69c7aa;
+  --au-accent-strong: #8edbc2;
+  --au-accent-soft: #203b32;
 }
 
-body.mw-special-Preferences .oo-ui-inputWidget-input,
-.mw-special-Preferences .oo-ui-inputWidget input[type="text"],
-.mw-special-Preferences .oo-ui-inputWidget input[type="search"] {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 16px 10px 42px;
-  border: 1px solid var(--au-line);
-  border-radius: 11px;
-  background: var(--au-surface);
+.aurelia :is(.oo-ui-panelLayout, .oo-ui-fieldsetLayout, .oo-ui-fieldLayout, .oo-ui-labelElement),
+body[data-aurelia-theme] :is(.oo-ui-popupWidget, .oo-ui-menuSelectWidget, .oo-ui-menuWidget, .oo-ui-window) {
   color: var(--au-text);
   font-family: inherit;
-  font-size: 14px;
-  box-shadow: none;
-  transition: border-color .16s ease, box-shadow .16s ease;
 }
 
-body.mw-special-Preferences .oo-ui-inputWidget input:focus,
-.mw-special-Preferences .oo-ui-inputWidget-input:focus {
+.aurelia .oo-ui-panelLayout,
+.aurelia .oo-ui-fieldsetLayout,
+.aurelia .oo-ui-fieldsetLayout-group,
+.aurelia .mw-htmlform-field,
+.aurelia .mw-htmlform-field > .oo-ui-fieldLayout-body {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.aurelia .oo-ui-panelLayout-framed,
+.aurelia .oo-ui-panelLayout-padded {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.aurelia .oo-ui-tabPanelLayout {
+  padding: clamp(14px, 2.4vw, 26px);
+  border: 1px solid var(--au-line);
+  border-radius: 14px;
+  background: var(--au-surface);
+}
+
+.aurelia .oo-ui-fieldsetLayout {
+  margin: 0 0 18px;
+  padding: 0;
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  background: var(--au-surface);
+}
+
+.aurelia .oo-ui-fieldsetLayout-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 24px);
+  padding: 0 8px;
+  color: var(--au-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.aurelia .oo-ui-fieldsetLayout-header .oo-ui-labelElement-label {
+  color: inherit;
+}
+
+.aurelia .oo-ui-fieldsetLayout-group {
+  padding: 14px 16px 5px;
+}
+
+.aurelia .mw-prefs-fieldset-wrapper {
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+.aurelia .mw-prefs-fieldset-wrapper > .oo-ui-fieldsetLayout {
+  border: 0;
+  border-top: 1px solid var(--au-line);
+  border-radius: 0;
+}
+
+.aurelia .mw-prefs-fieldset-wrapper > .oo-ui-fieldsetLayout > .oo-ui-fieldsetLayout-header {
+  padding: 0 8px 0 0;
+  font-size: 13px;
+}
+
+.aurelia .oo-ui-fieldLayout {
+  margin: 0 0 18px;
+}
+
+.aurelia .oo-ui-fieldLayout-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 7px 14px;
+  min-width: 0;
+}
+
+.aurelia .oo-ui-fieldLayout-header {
+  flex: 1 1 100%;
+  min-width: 0;
+  margin: 0;
+}
+
+.aurelia .oo-ui-fieldLayout-field {
+  flex: 1 1 240px;
+  min-width: min(180px, 100%);
+  max-width: 100%;
+}
+
+.aurelia .oo-ui-fieldLayout-align-inline .oo-ui-fieldLayout-body {
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
+.aurelia .oo-ui-labelElement-label,
+.aurelia .oo-ui-fieldLayout-header label {
+  color: var(--au-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.aurelia .oo-ui-inline-help,
+.aurelia .oo-ui-fieldLayout-help,
+.aurelia .oo-ui-fieldLayout .oo-ui-inline-help {
+  display: block;
+  flex: 1 1 100%;
+  margin: 2px 0 0;
+  color: var(--au-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aurelia .oo-ui-inputWidget,
+.aurelia .oo-ui-dropdownInputWidget,
+.aurelia .oo-ui-textInputWidget,
+.aurelia .oo-ui-numberInputWidget,
+.aurelia .oo-ui-comboBoxInputWidget {
+  max-width: 100%;
+}
+
+.aurelia .oo-ui-inputWidget-input,
+.aurelia .oo-ui-inputWidget input:not([type="checkbox"]):not([type="radio"]),
+.aurelia .oo-ui-dropdownInputWidget select,
+.aurelia .oo-ui-textInputWidget input,
+.aurelia .oo-ui-numberInputWidget input {
+  min-height: 42px;
+  max-width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface-soft);
+  color: var(--au-text);
+  font: inherit;
+  box-shadow: none;
+  transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
+}
+
+.aurelia .oo-ui-inputWidget-input:hover,
+.aurelia .oo-ui-inputWidget input:not([type="checkbox"]):not([type="radio"]):hover,
+.aurelia .oo-ui-dropdownInputWidget select:hover {
+  border-color: color-mix(in srgb, var(--au-accent) 55%, var(--au-line));
+  background: var(--au-surface);
+}
+
+.aurelia .oo-ui-inputWidget-input:focus,
+.aurelia .oo-ui-inputWidget-input:focus-visible,
+.aurelia .oo-ui-inputWidget input:focus-visible,
+.aurelia .oo-ui-dropdownInputWidget select:focus-visible {
   border-color: var(--au-accent);
   outline: 0;
+  background: var(--au-surface);
   box-shadow: 0 0 0 3px var(--au-accent-soft);
 }
 
-body.mw-special-Preferences .oo-ui-iconElement .oo-ui-iconElement-icon,
-.mw-special-Preferences .oo-ui-icon-search {
-  position: absolute;
-  top: 50%;
-  left: 14px;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  opacity: .75;
-  pointer-events: none;
+.aurelia .oo-ui-inputWidget.oo-ui-widget-disabled .oo-ui-inputWidget-input,
+.aurelia .oo-ui-widget-disabled .oo-ui-inputWidget-input,
+.aurelia .oo-ui-inputWidget-input:disabled {
+  opacity: .58;
+  cursor: not-allowed;
 }
 
-body.mw-special-Preferences .oo-ui-tabSelectWidget,
-.mw-special-Preferences .oo-ui-tabSelectWidget.oo-ui-tabSelectWidget-framed {
+.aurelia .oo-ui-fieldLayout .oo-ui-indicatorElement-indicator,
+.aurelia .oo-ui-fieldLayout .oo-ui-iconElement-icon {
+  color: var(--au-muted);
+}
+
+.aurelia .oo-ui-tabSelectWidget {
   display: flex;
   flex-wrap: nowrap;
-  gap: 8px;
+  gap: 7px;
+  max-width: 100%;
   overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border: 0 !important;
-  background: transparent !important;
-  padding: 4px 0 16px 0;
-  margin-bottom: 24px;
-  box-shadow: none !important;
+  overflow-y: hidden;
+  padding: 3px 2px 13px;
+  margin: 0 0 18px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
   scrollbar-width: thin;
+  scrollbar-color: var(--au-line) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
-body.mw-special-Preferences .oo-ui-tabSelectWidget::-webkit-scrollbar {
-  height: 4px;
-}
+.aurelia .oo-ui-tabSelectWidget::-webkit-scrollbar { height: 4px; }
+.aurelia .oo-ui-tabSelectWidget::-webkit-scrollbar-thumb { border-radius: 9px; background: var(--au-line); }
 
-body.mw-special-Preferences .oo-ui-tabSelectWidget::-webkit-scrollbar-thumb {
-  background: var(--au-line);
-  border-radius: 4px;
-}
-
-body.mw-special-Preferences .oo-ui-tabOptionWidget,
-.mw-special-Preferences .oo-ui-tabOptionWidget {
+.aurelia .oo-ui-tabOptionWidget {
   display: inline-flex;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  flex: 0 0 auto;
-  min-height: 40px;
-  padding: 8px 16px;
-  border: 1px solid var(--au-line) !important;
-  border-radius: 10px;
-  background: var(--au-surface) !important;
+  min-height: 39px;
+  padding: 7px 14px;
+  border: 1px solid var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface);
   color: var(--au-muted);
-  font-weight: 550;
+  box-shadow: none;
   cursor: pointer;
-  transition: all .16s ease;
-  box-shadow: none !important;
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
 }
 
-body.mw-special-Preferences .oo-ui-tabOptionWidget:hover,
-.mw-special-Preferences .oo-ui-tabOptionWidget:hover {
-  border-color: var(--au-accent) !important;
-  background: var(--au-surface-soft) !important;
+.aurelia .oo-ui-tabOptionWidget:hover {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  transform: translateY(-1px);
+}
+
+.aurelia .oo-ui-tabOptionWidget:focus-visible,
+.aurelia .oo-ui-tabOptionWidget.oo-ui-optionWidget-selected {
+  border-color: var(--au-accent);
+  outline: 0;
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--au-accent) 15%, transparent);
+}
+
+.aurelia .oo-ui-tabOptionWidget .oo-ui-labelElement-label { color: inherit; white-space: nowrap; }
+
+.aurelia .oo-ui-buttonElement-button,
+.aurelia .oo-ui-buttonInputWidget .oo-ui-inputWidget-input {
+  transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.aurelia .oo-ui-buttonElement-framed > .oo-ui-buttonElement-button,
+.aurelia .oo-ui-buttonInputWidget.oo-ui-buttonElement-framed .oo-ui-inputWidget-input {
+  min-height: 38px;
+  border: 1px solid var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface);
   color: var(--au-text);
+  box-shadow: none;
 }
 
-body.mw-special-Preferences .oo-ui-tabOptionWidget.oo-ui-optionWidget-selected,
-.mw-special-Preferences .oo-ui-tabOptionWidget.oo-ui-optionWidget-selected {
-  border-color: var(--au-accent) !important;
-  background: var(--au-accent-soft) !important;
-  color: var(--au-accent-strong) !important;
+.aurelia .oo-ui-buttonElement-framed:not(.oo-ui-widget-disabled) > .oo-ui-buttonElement-button:hover,
+.aurelia .oo-ui-buttonInputWidget:not(.oo-ui-widget-disabled) .oo-ui-inputWidget-input:hover {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+}
+
+.aurelia .oo-ui-buttonElement-framed > .oo-ui-buttonElement-button:focus-visible,
+.aurelia .oo-ui-buttonInputWidget .oo-ui-inputWidget-input:focus-visible {
+  outline: 2px solid var(--au-accent);
+  outline-offset: 2px;
+}
+
+.aurelia .oo-ui-flaggedElement-primary > .oo-ui-buttonElement-button,
+.aurelia .oo-ui-flaggedElement-progressive > .oo-ui-buttonElement-button,
+.aurelia .oo-ui-flaggedElement-primary .oo-ui-inputWidget-input,
+.aurelia .oo-ui-flaggedElement-progressive .oo-ui-inputWidget-input {
+  border-color: var(--au-accent-strong);
+  background: var(--au-accent);
+  color: #fff;
   font-weight: 650;
-  box-shadow: 0 4px 12px rgba(8, 127, 104, .08) !important;
 }
 
-body.mw-special-Preferences .oo-ui-tabOptionWidget .oo-ui-labelElement-label,
-.mw-special-Preferences .oo-ui-tabOptionWidget .oo-ui-labelElement-label {
-  color: inherit;
-  font-size: 13.5px;
-  white-space: nowrap;
+.aurelia .oo-ui-flaggedElement-primary:not(.oo-ui-widget-disabled) > .oo-ui-buttonElement-button:hover,
+.aurelia .oo-ui-flaggedElement-progressive:not(.oo-ui-widget-disabled) > .oo-ui-buttonElement-button:hover,
+.aurelia .oo-ui-flaggedElement-primary:not(.oo-ui-widget-disabled) .oo-ui-inputWidget-input:hover,
+.aurelia .oo-ui-flaggedElement-progressive:not(.oo-ui-widget-disabled) .oo-ui-inputWidget-input:hover {
+  border-color: var(--au-accent-strong);
+  background: var(--au-accent-strong);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px color-mix(in srgb, var(--au-accent) 22%, transparent);
 }
 
-body.mw-special-Preferences .oo-ui-fieldLayout,
-.mw-special-Preferences .oo-ui-fieldLayout {
-  margin-bottom: 16px;
+.aurelia .oo-ui-widget-disabled > .oo-ui-buttonElement-button,
+.aurelia .oo-ui-widget-disabled .oo-ui-inputWidget-input {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-body.mw-special-Preferences .oo-ui-panelLayout,
-.mw-special-Preferences .oo-ui-panelLayout {
-  background: transparent;
+.aurelia .oo-ui-checkboxInputWidget .oo-ui-inputWidget-input,
+.aurelia .oo-ui-checkboxInputWidget input[type="checkbox"] {
+  accent-color: var(--au-accent);
+}
+
+.aurelia .oo-ui-checkboxInputWidget .oo-ui-checkboxInputWidget-checkIcon {
+  color: var(--au-accent-strong);
+}
+
+.aurelia .mw-htmlform-submit-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--au-line);
+}
+
+.aurelia .mw-htmlform-submit-buttons #prefcontrol,
+.aurelia .mw-htmlform-submit-buttons #prefcontrol > button {
+  min-width: 112px;
+}
+
+.aurelia .mw-htmlform-submit-buttons #prefcontrol > button {
+  min-height: 42px;
+  padding-inline: 20px;
+  border-radius: 10px;
+}
+
+.aurelia .mw-htmlform-submit-buttons #prefcontrol.oo-ui-widget-disabled,
+.aurelia .mw-htmlform-submit-buttons #prefcontrol[aria-disabled="true"] {
+  opacity: .55;
+}
+
+.aurelia .oo-ui-searchWidget .oo-ui-inputWidget,
+.aurelia .oo-ui-searchWidget .oo-ui-iconElement,
+.aurelia .oo-ui-textInputWidget.oo-ui-iconElement {
+  position: relative;
+  min-width: 0;
+}
+
+.aurelia .oo-ui-searchWidget .oo-ui-inputWidget-input,
+.aurelia .oo-ui-textInputWidget.oo-ui-iconElement .oo-ui-inputWidget-input {
+  padding-inline-start: 40px;
+}
+
+.aurelia .oo-ui-iconElement-icon.oo-ui-icon-search {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 50%;
+  inset-inline-start: 13px;
+  display: inline-grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  margin: 0;
+  color: var(--au-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: color .16s ease, transform .16s ease;
+}
+
+.aurelia .oo-ui-searchWidget:focus-within .oo-ui-iconElement-icon.oo-ui-icon-search,
+.aurelia .oo-ui-textInputWidget:focus-within .oo-ui-iconElement-icon.oo-ui-icon-search {
+  color: var(--au-accent-strong);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.aurelia .oo-ui-iconElement-icon.oo-ui-icon-search::before {
+  content: "\\f002";
+  font-family: "Font Awesome 7 Free";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Recent Changes filters and popup widgets */
+.aurelia :is(.mw-rcfilters-ui-row, .mw-rcfilters-ui-filterMenuHeaderWidget) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.aurelia .mw-rcfilters-ui-row {
+  padding: 10px 12px;
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  background: var(--au-surface);
+}
+
+.aurelia .mw-rcfilters-ui-cell {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  min-width: 0;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget-header-title {
+  flex: 1 1 150px;
+  color: var(--au-text);
+  font-weight: 700;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget-title {
+  color: var(--au-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget-header-back,
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget-header-highlight {
+  flex: 0 0 auto;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid var(--au-line);
+  border-radius: 8px;
+  background: var(--au-surface-soft);
   color: var(--au-text);
 }
 
-@media (max-width: 768px) {
-  body.mw-special-Preferences .oo-ui-tabSelectWidget,
-  .mw-special-Preferences .oo-ui-tabSelectWidget {
-    gap: 6px;
-    padding-bottom: 12px;
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button:hover {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button:focus-visible {
+  outline: 2px solid var(--au-accent);
+  outline-offset: 2px;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-toggleWidget-on .oo-ui-buttonElement-button,
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-toggleButtonWidget.oo-ui-buttonElement-active .oo-ui-buttonElement-button {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+}
+
+.aurelia .mw-rcfilters-ui-savedLinksListWidget-placeholder-title {
+  padding: 16px;
+  border: 1px dashed var(--au-line);
+  border-radius: 10px;
+  color: var(--au-muted);
+  text-align: center;
+  font-size: 13px;
+}
+
+.aurelia .mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-top-queryName {
+  min-width: 0;
+  margin-bottom: 10px;
+}
+
+.aurelia .mw-rcfilters-ui-filterTagMultiselectWidget-wrapper-content-savedQueryTitle:not(.oo-ui-element-hidden) {
+  display: block;
+  color: var(--au-text);
+  font-weight: 650;
+}
+
+.aurelia .mw-rcfilters-ui-valuePickerWidget,
+.aurelia .mw-rcfilters-ui-datePopupWidget {
+  min-width: 0;
+  margin: 0 0 16px;
+}
+
+.aurelia .mw-rcfilters-ui-valuePickerWidget-title,
+.aurelia .mw-rcfilters-ui-datePopupWidget-title {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--au-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.aurelia .mw-rcfilters-ui-datePopupWidget-hours,
+.aurelia .mw-rcfilters-ui-datePopupWidget-days {
+  margin-top: 10px;
+}
+
+.aurelia .oo-ui-buttonSelectWidget {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 0;
+}
+
+.aurelia .oo-ui-buttonSelectWidget .oo-ui-optionWidget {
+  flex: 0 0 auto;
+  min-width: 42px;
+  border: 1px solid var(--au-line);
+  border-radius: 8px;
+  background: var(--au-surface-soft);
+  color: var(--au-muted);
+  transition: border-color .16s ease, background-color .16s ease, color .16s ease, transform .16s ease;
+}
+
+.aurelia .oo-ui-buttonSelectWidget .oo-ui-optionWidget:hover {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  transform: translateY(-1px);
+}
+
+.aurelia .oo-ui-buttonSelectWidget .oo-ui-optionWidget-selected,
+.aurelia .oo-ui-buttonSelectWidget .oo-ui-optionWidget.oo-ui-buttonElement-active {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--au-accent) 18%, transparent);
+}
+
+.aurelia .oo-ui-buttonSelectWidget .oo-ui-buttonElement-button {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 11px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+}
+
+/* OOUI popup content is sometimes mounted outside #content */
+body[data-aurelia-theme] .oo-ui-popupWidget,
+body[data-aurelia-theme] .oo-ui-popupWidget-popup,
+body[data-aurelia-theme] .oo-ui-clippableElement-clippable,
+body[data-aurelia-theme] .oo-ui-menuSelectWidget,
+body[data-aurelia-theme] .oo-ui-menuWidget,
+body[data-aurelia-theme] .oo-ui-menuOptionWidget {
+  color: var(--au-text);
+  font-family: inherit;
+}
+
+body[data-aurelia-theme] .oo-ui-popupWidget-popup {
+  z-index: 1100;
+  filter: drop-shadow(0 12px 28px rgba(0,0,0,.14));
+}
+
+body[data-aurelia-theme] .oo-ui-popupWidget-body,
+body[data-aurelia-theme] .oo-ui-clippableElement-clippable {
+  max-width: min( min(92vw, 420px), 100% );
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  background: var(--au-surface);
+  color: var(--au-text);
+  scrollbar-width: thin;
+  scrollbar-color: var(--au-line) transparent;
+}
+
+body[data-aurelia-theme] .oo-ui-popupWidget-body {
+  padding: 14px;
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: var(--au-text);
+  cursor: pointer;
+  transition: background-color .14s ease, color .14s ease;
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget:hover,
+body[data-aurelia-theme] .oo-ui-menuOptionWidget:focus-visible {
+  outline: 0;
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget.oo-ui-optionWidget-selected {
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+  font-weight: 650;
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget .oo-ui-labelElement-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: inherit;
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget .oo-ui-iconElement-icon,
+body[data-aurelia-theme] .oo-ui-menuOptionWidget .oo-ui-indicatorElement-indicator {
+  flex: 0 0 auto;
+  color: inherit;
+}
+
+body[data-aurelia-theme] .oo-ui-menuSelectWidget,
+body[data-aurelia-theme] .oo-ui-menuWidget {
+  padding: 5px;
+  border: 1px solid var(--au-line);
+  border-radius: 11px;
+  background: var(--au-surface);
+}
+
+body[data-aurelia-theme] .oo-ui-menuOptionWidget.oo-ui-optionWidget-disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+/* Codex messages and account forms */
+.aurelia :is(.cdx-message, .mw-message-box) {
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.aurelia .cdx-message--block {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+}
+
+.aurelia .cdx-message--error {
+  border: 1px solid color-mix(in srgb, #c74440 28%, var(--au-line));
+  background: color-mix(in srgb, #c74440 8%, var(--au-surface));
+  color: var(--au-text);
+}
+
+.aurelia .cdx-message--error .cdx-message__content {
+  color: inherit;
+  line-height: 1.55;
+}
+
+.aurelia :is(.cdx-checkbox, .mw-htmlform-field-HTMLCheckField) {
+  color: var(--au-text);
+}
+
+.aurelia .cdx-checkbox__label {
+  color: var(--au-text);
+  cursor: pointer;
+}
+
+.aurelia :is(.cdx-checkbox__input, .oo-ui-checkboxInputWidget input[type="checkbox"]) {
+  accent-color: var(--au-accent);
+}
+
+.aurelia :is(#mw-createaccount-join, .mw-createaccount-join) {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+
+.aurelia :is(#mw-createaccount-join, .mw-createaccount-join):hover {
+  color: var(--au-accent-strong);
+}
+
+@media (max-width: 760px) {
+  .aurelia .oo-ui-tabPanelLayout { padding: 13px; }
+  .aurelia .oo-ui-fieldsetLayout-group { padding: 11px 12px 3px; }
+  .aurelia .oo-ui-fieldLayout-field { flex-basis: 100%; }
+  .aurelia .mw-rcfilters-ui-row { align-items: stretch; padding: 9px; }
+  .aurelia .mw-rcfilters-ui-filterMenuHeaderWidget-header-title { flex-basis: 100%; order: -1; }
+  .aurelia .mw-rcfilters-ui-cell { flex: 0 1 auto; }
+  .aurelia .mw-htmlform-submit-buttons { justify-content: stretch; }
+  .aurelia .mw-htmlform-submit-buttons #prefcontrol,
+  .aurelia .mw-htmlform-submit-buttons #prefcontrol > button { width: 100%; }
+  body[data-aurelia-theme] .oo-ui-popupWidget-body,
+  body[data-aurelia-theme] .oo-ui-clippableElement-clippable { max-width: calc(100vw - 24px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia :is(.oo-ui-tabOptionWidget, .oo-ui-buttonElement-button, .oo-ui-optionWidget, .oo-ui-inputWidget-input),
+  body[data-aurelia-theme] .oo-ui-menuOptionWidget {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
   }
-  
-  body.mw-special-Preferences .oo-ui-tabOptionWidget,
-  .mw-special-Preferences .oo-ui-tabOptionWidget {
-    min-height: 36px;
-    padding: 6px 12px;
-    font-size: 13px;
+}
+
+
+/* Preferences-specific input alignment and menu sizing */
+body.mw-special-Preferences .aurelia .oo-ui-inputWidget-input,
+body.mw-special-Preferences .aurelia .oo-ui-inputWidget input:not([type="checkbox"]):not([type="radio"]),
+body.mw-special-Preferences .aurelia .oo-ui-dropdownInputWidget select {
+  padding: 9px 12px;
+}
+
+body.mw-special-Preferences .aurelia input[type="search"].oo-ui-inputWidget-input,
+body.mw-special-Preferences .aurelia .oo-ui-searchWidget .oo-ui-inputWidget-input,
+body.mw-special-Preferences .aurelia .oo-ui-textInputWidget.oo-ui-iconElement .oo-ui-inputWidget-input {
+  padding-inline-start: 40px;
+}
+
+body.mw-special-Preferences .aurelia .oo-ui-iconElement-icon.oo-ui-icon-search {
+  inset-inline-start: 13px;
+}
+
+.aurelia :is(.oo-ui-dropdownWidget, .oo-ui-dropdownWidget-handle, .oo-ui-dropdownInputWidget) {
+  max-width: 100%;
+}
+
+.aurelia .oo-ui-dropdownWidget-handle {
+  min-height: 40px;
+  border: 1px solid var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface-soft);
+  color: var(--au-text);
+  transition: border-color .16s ease, background-color .16s ease, box-shadow .16s ease;
+}
+
+.aurelia .oo-ui-dropdownWidget-handle:hover {
+  border-color: var(--au-accent);
+  background: var(--au-surface);
+}
+
+.aurelia .oo-ui-dropdownWidget-handle:focus-visible {
+  outline: 2px solid var(--au-accent);
+  outline-offset: 2px;
+}
+
+body[data-aurelia-theme] .oo-ui-clippableElement-clippable {
+  max-width: min(92vw, 420px) !important;
+}
+
+.aurelia .mw-htmlform-field a:not(.oo-ui-buttonElement-button) {
+  text-underline-offset: 3px;
+}
+
+.aurelia .mw-htmlform-field a:not(.oo-ui-buttonElement-button):hover {
+  color: var(--au-accent-strong);
+}
+
+
+/* Native MediaWiki interface coverage */
+.aurelia :is(.mw-editform, #editform, .mw-htmlform, .mw-specialpage-summary, .mw-body-content .mw-warning-box) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-editform, #editform) {
+  display: flow-root;
+  min-width: 0;
+}
+
+.aurelia :is(.mw-editform .editOptions, .mw-editform .editButtons, .mw-editform .mw-editTools, .mw-editform .editCheckboxes, .mw-editform .templatesUsed, .mw-editform .hiddencats) {
+  margin-block: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  background: var(--au-surface);
+}
+
+.aurelia :is(#wpTextbox1, .mw-editform textarea, .mw-htmlform textarea, .mw-input, textarea) {
+  max-width: 100%;
+}
+
+.aurelia :is(.wikiEditor-ui, .wikiEditor-ui-toolbar, .wikiEditor-ui-text, .CodeMirror, .cm-editor) {
+  border-color: var(--au-line) !important;
+  border-radius: 10px;
+}
+
+.aurelia .wikiEditor-ui-toolbar {
+  background: var(--au-surface-soft);
+  overflow-x: auto;
+}
+
+.aurelia .wikiEditor-ui-toolbar .tabs,
+.aurelia .wikiEditor-ui-toolbar .section {
+  border-color: var(--au-line);
+}
+
+.aurelia :is(.mw-editform #wpTextbox1, .wikiEditor-ui textarea) {
+  width: 100%;
+  min-height: 22rem;
+  padding: 14px;
+  border: 1px solid var(--au-line);
+  border-radius: 0 0 10px 10px;
+  background: var(--au-surface);
+  color: var(--au-text);
+  font: 14px/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  resize: vertical;
+}
+
+.aurelia :is(.mw-editform .editButtons, .mw-htmlform-submit-buttons) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.aurelia :is(.mw-editform .editButtons button, .mw-editform .editButtons input, .mw-editform .editButtons a, .mw-htmlform button, .mw-htmlform input[type="submit"]) {
+  border-radius: 9px;
+}
+
+.aurelia :is(.mw-summary, #wpSummary, #wpSummaryLabel) {
+  max-width: 100%;
+}
+
+.aurelia :is(.mw-editform .cancelLink, .mw-editform .editHelp, .mw-editform .mw-editTools) {
+  color: var(--au-muted);
+}
+
+.aurelia :is(.mw-anon-edit-warning, .mw-newarticletextanon, .mw-editform .warningbox, .mw-editform .errorbox) {
+  margin-block: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--au-line);
+  border-inline-start: 4px solid var(--au-accent);
+  border-radius: 10px;
+  background: var(--au-surface-soft);
+}
+
+.aurelia :is(.mw-changeslist, .mw-contributions-list, .mw-logline, .mw-watchlist, .mw-history, .mw-allpages-table, .mw-prefixindex-list) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-changeslist ul, .mw-contributions-list ul, .mw-watchlist ul) {
+  margin-block: 10px;
+  padding-inline-start: 1.5rem;
+}
+
+.aurelia :is(.mw-changeslist li, .mw-contributions-list li, .mw-watchlist li, .mw-logline) {
+  padding-block: 7px;
+  border-bottom: 1px solid var(--au-line);
+  line-height: 1.6;
+}
+
+.aurelia :is(.mw-changeslist .mw-tag, .mw-tag-markers a, .mw-rcfilters-ui-chip, .mw-rcfilters-ui-filterTagMultiselectWidget-tag) {
+  border-radius: 999px;
+}
+
+.aurelia :is(.mw-history-compare, .mw-history-compare label, .mw-history .mw-changeslist) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-pager, .mw-pager-navigation-bar, .mw-prevnext, .mw-numlink, .mw-allpages-nav, .mw-prefixindex-nav) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin-block: 12px;
+}
+
+.aurelia :is(.mw-pager a, .mw-prevnext a, .mw-numlink a, .mw-allpages-nav a, .mw-prefixindex-nav a) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid var(--au-line);
+  border-radius: 8px;
+  background: var(--au-surface);
+  color: var(--au-text);
+  text-decoration: none;
+}
+
+.aurelia :is(.mw-pager a:hover, .mw-prevnext a:hover, .mw-numlink a:hover, .mw-allpages-nav a:hover, .mw-prefixindex-nav a:hover) {
+  border-color: var(--au-accent);
+  background: var(--au-accent-soft);
+  color: var(--au-accent-strong);
+}
+
+.aurelia :is(.mw-datatable, .mw-datatable table, .mw-protect-table, .mw-specialpage-table, .mw-allpages-table, .mw-prefixindex-list table) {
+  max-width: 100%;
+  border-color: var(--au-line);
+}
+
+.aurelia :is(.mw-datatable th, .mw-protect-table th, .mw-specialpage-table th) {
+  background: var(--au-surface-soft);
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-datatable td, .mw-datatable th, .mw-protect-table td, .mw-protect-table th, .mw-specialpage-table td, .mw-specialpage-table th) {
+  padding: 9px 11px;
+  border-color: var(--au-line);
+}
+
+.aurelia :is(.mw-upload-form, .mw-upload-form fieldset, .mw-htmlform fieldset, .mw-blockip fieldset) {
+  min-width: 0;
+  border-color: var(--au-line);
+  border-radius: 12px;
+}
+
+.aurelia :is(.mw-upload-form legend, .mw-htmlform legend) {
+  padding-inline: 8px;
+  color: var(--au-text);
+  font-weight: 650;
+}
+
+.aurelia :is(.mw-upload-form .upload-form-label, .mw-upload-form label, .mw-htmlform label) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-upload-form input[type="file"], .mw-htmlform input[type="file"]) {
+  max-width: 100%;
+  padding: 9px;
+  border: 1px dashed var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface-soft);
+}
+
+.aurelia :is(.mw-login, .mw-createaccount, .mw-userlogin-form, .mw-htmlform) {
+  max-width: 100%;
+}
+
+.aurelia :is(.mw-login-form, .mw-createaccount-form, .mw-userlogin-form form) {
+  padding: clamp(14px, 2.5vw, 24px);
+  border: 1px solid var(--au-line);
+  border-radius: 14px;
+  background: var(--au-surface);
+  box-shadow: var(--au-shadow);
+}
+
+.aurelia :is(.mw-login-form label, .mw-createaccount-form label, .mw-userlogin-form label) {
+  color: var(--au-text);
+  font-weight: 600;
+}
+
+.aurelia :is(.mw-login-form .mw-htmlform-field, .mw-createaccount-form .mw-htmlform-field) {
+  margin-block: 12px;
+}
+
+.aurelia :is(.mw-diff, .diff) {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--au-line);
+  border-radius: 10px;
+  background: var(--au-surface);
+}
+
+.aurelia :is(.mw-diff table, .diff table) {
+  min-width: 620px;
+  border-collapse: collapse;
+}
+
+.aurelia :is(.mw-diff .diff-addedline, .diff .diff-addedline) {
+  background: color-mix(in srgb, #2b9b62 13%, var(--au-surface));
+}
+
+.aurelia :is(.mw-diff .diff-deletedline, .diff .diff-deletedline) {
+  background: color-mix(in srgb, #d34b4b 12%, var(--au-surface));
+}
+
+.aurelia :is(.mw-diff .diff-context, .diff .diff-context) {
+  background: var(--au-surface-soft);
+}
+
+.aurelia :is(.mw-diff td, .mw-diff th, .diff td, .diff th) {
+  border-color: var(--au-line);
+}
+
+.aurelia :is(.mw-category-generated, .mw-category-group, .mw-category) {
+  padding: 12px 14px;
+  border: 1px solid var(--au-line);
+  border-radius: 10px;
+  background: var(--au-surface);
+}
+
+.aurelia :is(.mw-category-group h3, .mw-category h3) {
+  margin-block: 0 8px;
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-parser-output .toc, .mw-parser-output .toccolours, .mw-parser-output .mw-collapsible) {
+  border-color: var(--au-line);
+  border-radius: 10px;
+  background: var(--au-surface-soft);
+}
+
+.aurelia .mw-parser-output .toc {
+  padding: 14px 18px;
+}
+
+.aurelia :is(.mw-collapsible-toggle, .mw-collapsible-toggle a) {
+  color: var(--au-accent-strong);
+}
+
+.aurelia :is(.mw-parser-output .thumb, .mw-parser-output .thumbinner, .mw-parser-output .gallery, .mw-parser-output .gallerybox) {
+  border-color: var(--au-line);
+  border-radius: 9px;
+  background: var(--au-surface);
+}
+
+.aurelia .mw-parser-output .thumbcaption {
+  padding: 7px 9px;
+  color: var(--au-muted);
+  font-size: .9em;
+}
+
+.aurelia :is(.mw-parser-output .gallery, .mw-parser-output .gallery.mw-gallery-packed, .mw-parser-output .gallery.mw-gallery-traditional) {
+  max-width: 100%;
+}
+
+.aurelia :is(.mw-notification-area, .mw-notification-area-overlay, .mw-echo-ui-notificationsInboxWidget, .mw-echo-ui-notificationBadge) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-echo-ui-notificationItemWidget, .mw-echo-ui-notificationItemWidget-content) {
+  border-color: var(--au-line);
+}
+
+.aurelia :is(.mw-echo-ui-notificationItemWidget:hover, .mw-echo-ui-notificationItemWidget:focus-within) {
+  background: var(--au-accent-soft);
+}
+
+.aurelia :is(.mw-echo-ui-notificationItemWidget-unread, .mw-echo-ui-notificationItemWidget.oo-ui-flaggedElement-highlight) {
+  border-inline-start: 3px solid var(--au-accent);
+}
+
+.aurelia :is(.mw-specialpages-list, .mw-specialpages-list ul, .mw-specialpagegroups) {
+  color: var(--au-text);
+}
+
+.aurelia .mw-specialpages-list li {
+  padding-block: 5px;
+}
+
+.aurelia :is(.mw-search-form, #search, .mw-search-results-container) {
+  max-width: 100%;
+}
+
+.aurelia :is(.mw-search-results .mw-search-result, .mw-search-results .mw-search-result-heading) {
+  overflow-wrap: anywhere;
+}
+
+.aurelia :is(.mw-search-results .mw-search-result) {
+  padding: 14px 16px;
+  border: 1px solid var(--au-line);
+  border-radius: 11px;
+  background: var(--au-surface);
+}
+
+.aurelia :is(.mw-search-results .mw-search-result + .mw-search-result) {
+  margin-top: 10px;
+}
+
+.aurelia :is(.mw-htmlform .oo-ui-fieldLayout, .mw-htmlform .mw-htmlform-field) {
+  min-width: 0;
+}
+
+.aurelia :is(.mw-htmlform input, .mw-htmlform select, .mw-htmlform textarea, .oo-ui-inputWidget-input) {
+  max-width: 100%;
+}
+
+.aurelia :is(.mw-htmlform .cdx-message, .mw-parser-output .cdx-message) {
+  border-radius: 10px;
+}
+
+.aurelia :is(.mw-rcfilters-ui-filterMenuHeaderWidget-header-title, .mw-rcfilters-ui-filterMenuHeaderWidget-title) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.aurelia .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button {
+  min-height: 36px;
+}
+
+.aurelia :is(.mw-rcfilters-ui-valuePickerWidget, .mw-rcfilters-ui-datePopupWidget, .mw-rcfilters-ui-filterMenuHeaderWidget) {
+  color: var(--au-text);
+}
+
+.aurelia :is(.mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button:hover, .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button:focus-visible) {
+  transform: translateY(-1px);
+}
+
+.aurelia :is(.mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button, .mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button:hover) {
+  transition: background-color .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+@media (max-width: 760px) {
+  .aurelia :is(.mw-editform .editOptions, .mw-editform .editButtons, .mw-editform .mw-editTools, .mw-editform .editCheckboxes) {
+    padding: 11px;
   }
 
-  body.mw-special-Preferences .oo-ui-inputWidget-input,
-  .mw-special-Preferences .oo-ui-inputWidget input[type="text"],
-  .mw-special-Preferences .oo-ui-inputWidget input[type="search"] {
-    min-height: 40px;
-    font-size: 13.5px;
+  .aurelia :is(.mw-editform .editButtons, .mw-htmlform-submit-buttons) {
+    align-items: stretch;
+  }
+
+  .aurelia :is(.mw-editform .editButtons button, .mw-editform .editButtons input, .mw-htmlform-submit-buttons > *) {
+    max-width: 100%;
+  }
+
+  .aurelia :is(.mw-diff, .diff, .mw-changeslist, .mw-rcfilters-ui-row, .mw-upload-form) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .aurelia :is(.mw-login-form, .mw-createaccount-form, .mw-userlogin-form form) {
+    padding: 14px;
+  }
+
+  .aurelia :is(.mw-pager, .mw-pager-navigation-bar, .mw-prevnext, .mw-numlink) {
+    gap: 5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurelia :is(.mw-rcfilters-ui-filterMenuHeaderWidget .oo-ui-buttonElement-button, .mw-search-results .mw-search-result) {
+    transition: none;
+    transform: none;
   }
 }

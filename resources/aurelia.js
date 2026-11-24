@@ -7,6 +7,12 @@
     return;
   }
 
+  var footer = root.querySelector('.aurelia-footer');
+
+  if (footer && !footer.querySelector('li, a, img')) {
+    footer.remove();
+  }
+
   var sidebar = root.querySelector('.aurelia-sidebar');
   var navToggle = root.querySelector('.aurelia-nav-toggle');
   var backdrop = root.querySelector('.aurelia-backdrop');
@@ -139,9 +145,49 @@
     '.aurelia-search input[type="search"], .aurelia-search input[name="search"]'
   );
 
-  function openSearch() {
-    if (!searchPanel || !header) {
+  var searchCloseTimer = null;
+  var searchMotion = window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)')
+    : null;
+  var desktopSearch = window.matchMedia
+    ? window.matchMedia('(min-width: 761px)')
+    : { matches: window.innerWidth > 760 };
+
+  function syncSearchLayout() {
+    if (!searchPanel || !header) return;
+
+    if (desktopSearch.matches) {
+      if (searchCloseTimer) {
+        window.clearTimeout(searchCloseTimer);
+        searchCloseTimer = null;
+      }
+      searchPanel.hidden = false;
+      searchPanel.classList.add('is-visible');
+      header.classList.add('aurelia-search-open');
+      if (searchToggle) {
+        searchToggle.setAttribute('aria-expanded', 'true');
+      }
+      if (searchInput && searchInput === document.activeElement) {
+        searchInput.blur();
+      }
       return;
+    }
+
+    searchPanel.classList.remove('is-visible');
+    header.classList.remove('aurelia-search-open');
+    searchPanel.hidden = true;
+    if (searchToggle) searchToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function openSearch() {
+    if (!searchPanel || !header || desktopSearch.matches) {
+      if (desktopSearch.matches && searchInput) searchInput.focus();
+      return;
+    }
+
+    if (searchCloseTimer) {
+      window.clearTimeout(searchCloseTimer);
+      searchCloseTimer = null;
     }
 
     searchPanel.hidden = false;
@@ -151,42 +197,74 @@
       searchToggle.setAttribute('aria-expanded', 'true');
     }
 
+    window.requestAnimationFrame(function () {
+      if (!searchPanel.hidden && header.classList.contains('aurelia-search-open')) {
+        searchPanel.classList.add('is-visible');
+      }
+    });
+
     if (searchInput) {
       searchInput.focus();
       searchInput.select();
     }
   }
 
-  function closeSearch() {
-    if (!searchPanel || !header) {
+  function closeSearch(restoreFocus) {
+    if (!searchPanel || !header || searchPanel.hidden || desktopSearch.matches) {
       return;
     }
 
-    searchPanel.hidden = true;
+    searchPanel.classList.remove('is-visible');
     header.classList.remove('aurelia-search-open');
 
     if (searchToggle) {
       searchToggle.setAttribute('aria-expanded', 'false');
-      searchToggle.focus();
+      if (restoreFocus) {
+        searchToggle.focus();
+      }
     }
 
-    if (searchInput) {
+    if (searchInput && document.activeElement === searchInput) {
       searchInput.blur();
     }
+
+    if (searchMotion && searchMotion.matches) {
+      searchPanel.hidden = true;
+      return;
+    }
+
+    if (searchCloseTimer) {
+      window.clearTimeout(searchCloseTimer);
+    }
+
+    searchCloseTimer = window.setTimeout(function () {
+      if (!searchPanel.classList.contains('is-visible')) {
+        searchPanel.hidden = true;
+      }
+      searchCloseTimer = null;
+    }, searchMotion && searchMotion.matches ? 0 : 340);
   }
+
+  syncSearchLayout();
+  if (desktopSearch.addEventListener) {
+    desktopSearch.addEventListener('change', syncSearchLayout);
+  } else if (desktopSearch.addListener) {
+    desktopSearch.addListener(syncSearchLayout);
+  }
+  window.addEventListener('resize', syncSearchLayout, { passive: true });
 
   if (searchToggle) {
     searchToggle.addEventListener('click', openSearch);
   }
 
   if (searchClose) {
-    searchClose.addEventListener('click', closeSearch);
+    searchClose.addEventListener('click', function () { closeSearch(true); });
   }
 
   document.addEventListener('click', function (event) {
     if (header && header.classList.contains('aurelia-search-open')) {
       if (searchPanel && !searchPanel.contains(event.target) && searchToggle && !searchToggle.contains(event.target)) {
-        closeSearch();
+        closeSearch(false);
       }
     }
   });
@@ -205,7 +283,7 @@
       closeNavigation();
 
       if (header && header.classList.contains('aurelia-search-open')) {
-        closeSearch();
+        closeSearch(true);
       } else if (document.activeElement === searchInput && searchInput) {
         searchInput.blur();
       }
@@ -390,40 +468,51 @@
     });
     link.insertBefore(icon, link.firstChild);
   });
+
+  root.querySelectorAll('.aurelia-header-actions #p-notifications a, .aurelia-header-actions [id*="notification"] a').forEach(function (link) {
+    if (!link.getAttribute('aria-label') && !link.getAttribute('title')) {
+      link.setAttribute('aria-label', 'Notifications');
+    }
+    if (!link.getAttribute('title')) {
+      link.setAttribute('title', link.getAttribute('aria-label') || 'Notifications');
+    }
+    var icon = link.querySelector(':scope > .aurelia-fa-icon');
+    if (icon) icon.className = 'aurelia-fa-icon fa-solid fa-bell';
+  });
 })();
 
-(() => {
-    const account = document.querySelector('.aurelia-account');
-    if (!account) return;
+(function () {
+  'use strict';
 
-    const toggle = account.querySelector('.aurelia-account-toggle');
-    const menu = account.querySelector('.aurelia-account-menu');
+  var account = document.querySelector('.aurelia-account');
+  if (!account) return;
 
-    if (!toggle || !menu) return;
+  var toggle = account.querySelector('.aurelia-account-toggle');
+  var menu = account.querySelector('.aurelia-account-menu');
+  if (!toggle || !menu) return;
 
-    const closeMenu = () => {
-        menu.hidden = true;
-        toggle.setAttribute('aria-expanded', 'false');
-    };
+  function closeMenu(restoreFocus) {
+    if (menu.hidden) return;
+    menu.hidden = true;
+    toggle.setAttribute('aria-expanded', 'false');
+    if (restoreFocus) toggle.focus();
+  }
 
-    toggle.addEventListener('click', () => {
-        const isOpen = !menu.hidden;
-        menu.hidden = isOpen;
-        toggle.setAttribute('aria-expanded', String(!isOpen));
-    });
+  toggle.addEventListener('click', function () {
+    var shouldOpen = menu.hidden;
+    menu.hidden = !shouldOpen;
+    toggle.setAttribute('aria-expanded', String(shouldOpen));
+  });
 
-    document.addEventListener('click', (event) => {
-        if (!account.contains(event.target)) {
-            closeMenu();
-        }
-    });
+  document.addEventListener('click', function (event) {
+    if (!account.contains(event.target)) closeMenu(false);
+  });
 
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeMenu();
-            toggle.focus();
-        }
-    });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape' && !menu.hidden) {
+      closeMenu(true);
+    }
+  });
 })();
 
 (function () {

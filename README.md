@@ -43,7 +43,3 @@ MIT
 Aurelia bundles **Font Awesome Free 7.3.1** locally; no CDN or external font request is used. The skin loads `resources/vendor/fontawesome/css/all.min.css` through MediaWiki ResourceLoader, with its matching WOFF2 files in `resources/vendor/fontawesome/webfonts/`.
 
 The bundled upstream license is included at `resources/vendor/fontawesome/LICENSE.txt`. Font Awesome Free uses CC BY 4.0 for icons, SIL OFL 1.1 for fonts, and MIT for code. See the included license file and the Font Awesome license page for the applicable terms.
-
-## Icons
-
-Aurelia bundles Font Awesome Free locally through ResourceLoader. Interface icons use Font Awesome classes and local webfonts; no external icon CDN is required. Icons are applied consistently to navigation, header controls, portlet links, page tools, footer links, search, theme controls, account controls, copy-code actions, and back-to-top.
